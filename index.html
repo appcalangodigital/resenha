@@ -183,6 +183,7 @@ input:focus { outline: 2px solid var(--green); border-color: var(--green); backg
   margin: 0 0 1rem;
 }
 
+.note.warn { background: #ffe9e6; border-left-color: var(--danger); color: #7a1f17; }
 .search {
   display: flex;
   gap: 0.5rem;
@@ -544,6 +545,7 @@ body{background:#063a1d}
 /* ===== Aparelhos: pedido de entrada e autorização ===== */
 #auth-screen{position:fixed;inset:0;z-index:55;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;padding:2rem;text-align:center;color:#fff;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='%23fff' fill-opacity='.08' stroke='%23fff' stroke-opacity='.12' stroke-width='1.2'%3E%3Cg transform='translate(20 44) rotate(-10)'%3E%3Cpath d='M0 0C10-26 38-40 70-38 66-6 40 14 0 0Z'/%3E%3Cpath d='M0 0 62-30' fill='none'/%3E%3C/g%3E%3Cg transform='translate(160 130) rotate(160)'%3E%3Cpath d='M0 0C10-26 38-40 70-38 66-6 40 14 0 0Z'/%3E%3Cpath d='M0 0 62-30' fill='none'/%3E%3C/g%3E%3Cg transform='translate(70 178) rotate(-62) scale(.8)'%3E%3Cpath d='M0 0C10-26 38-40 70-38 66-6 40 14 0 0Z'/%3E%3Cpath d='M0 0 62-30' fill='none'/%3E%3C/g%3E%3Cg transform='translate(150 40) rotate(40) scale(.7)'%3E%3Cpath d='M0 0C10-26 38-40 70-38 66-6 40 14 0 0Z'/%3E%3Cpath d='M0 0 62-30' fill='none'/%3E%3C/g%3E%3C/g%3E%3Cg fill='%23ffdf00' fill-opacity='.4'%3E%3Cpath d='M110 84 118 92 110 100 102 92Z'/%3E%3Cpath d='M34 124 40 130 34 136 28 130Z'/%3E%3Cpath d='M176 80l1.6 3.4 3.7.5-2.7 2.6.7 3.7-3.3-1.8-3.3 1.8.7-3.7-2.7-2.6 3.7-.5Z'/%3E%3Cpath d='M96 20l1.6 3.4 3.7.5-2.7 2.6.7 3.7-3.3-1.8-3.3 1.8.7-3.7-2.7-2.6 3.7-.5Z'/%3E%3C/g%3E%3C/svg%3E") 0 0/200px 200px,linear-gradient(180deg,#0a9a44 0%,#006b30 52%,#0a2f6b 100%)}
 #auth-screen svg{width:104px;height:104px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+#auth-msg{white-space:pre-line}
 #auth-screen.wait svg{animation:auth-pulse 1.8s ease-in-out infinite}
 @keyframes auth-pulse{50%{transform:scale(1.07)}}
 @media(prefers-reduced-motion:reduce){#auth-screen svg{animation:none!important}}
@@ -581,6 +583,7 @@ body{background:#063a1d}
         <h2>Resenha <span class="app">APP</span></h2>
         <p>O Seu App de Conversa!</p><p class="y">Conecte-se e Curta!</p>
         <div class="demo" aria-hidden="true"></div>
+        <p class="small">Nunca aceite pedidos de dinheiro por aqui. Use canais verificados, como WhatsApp ou Telegram.</p>
       </div>
       <p id="no-rooms" class="empty"></p>
       <div id="my-rooms" class="list"></div>
@@ -600,7 +603,7 @@ body{background:#063a1d}
       <div id="empty-main">
         <svg width="120" height="120" aria-hidden="true"><use href="#logo"/></svg>
         <h2>Resenha <span class="app">APP</span></h2>
-        <p>O Seu App de Conversa!</p><p class="y">Conecte-se e Curta!</p><p class="small">Mensagens somem em 10 minutos. Só texto, sem foto e sem áudio.</p>
+        <p>O Seu App de Conversa!</p><p class="y">Conecte-se e Curta!</p><p class="small">Mensagens somem em 10 minutos. Só texto, sem foto e sem áudio.</p><p class="small">Nunca aceite pedidos de dinheiro por aqui. Use canais verificados, como WhatsApp ou Telegram.</p>
         <div class="demo" aria-hidden="true"></div>
         <button id="empty-new" class="btn" style="width:auto;padding:.8rem 1.4rem">Adicionar contatos</button>
       </div>
@@ -648,7 +651,7 @@ body{background:#063a1d}
     </div></div>
     <div id="profile-modal" class="modal hidden"><div class="sheet">
       <h3>Meu cadastro</h3>
-      <div id="pf-install" class="installbox hidden"><b>Baixe o app primeiro</b><span>Instale o Resenha no celular e faça o cadastro por ele. Assim os avisos de mensagem funcionam.</span><button id="pf-install-btn" class="btn yellow" type="button">Baixar o app</button></div>
+      <div id="pf-install" class="installbox hidden"><b id="pf-install-ttl">Baixe o app primeiro</b><span id="pf-install-txt"></span><button id="pf-install-btn" class="btn yellow" type="button">Baixar o app</button></div>
       <div id="pf-photo" class="avatar"></div>
       <p class="tiny center" style="margin:0 0 .9rem">Toque no círculo para escolher sua foto</p>
       <label for="pf-name">Seu nome</label>
@@ -656,11 +659,13 @@ body{background:#063a1d}
       <label for="pf-phone">Seu celular com DDD</label>
       <input type="tel" id="pf-phone" inputmode="tel" placeholder="(85) 99999-0000">
       <p class="note">Seus dados ficam só neste celular. Quem conversa com você recebe apenas seu nome e sua foto, junto das mensagens.</p>
+      <p class="note"><b>Vai trocar de celular?</b> O celular novo pede autorização e a validação é feita pelo seu celular antigo. Se você não tiver mais o antigo, será preciso esperar 30 dias sem usar o Resenha nele para liberar o novo. Fique atento.</p>
+      <p class="note warn"><b>Segurança:</b> o Resenha é só um app de conversa, uma resenha entre amigos. Nunca aceite nem faça pedidos de dinheiro, Pix, códigos ou links por aqui. Para isso, use somente canais já verificados, como WhatsApp ou Telegram.</p>
       <div class="actions"><button id="pf-save" class="btn">Salvar</button><button id="pf-cancel" class="btn ghost" data-close>Cancelar</button></div>
     </div></div>
     <div id="devices-modal" class="modal hidden"><div class="sheet">
       <h3>Aparelhos conectados</h3>
-      <p class="tiny" style="margin:0 0 .8rem">Quem entra com o seu número precisa da sua autorização. Remova o aparelho que você não reconhece.</p>
+      <p class="tiny" style="margin:0 0 .8rem">Quem entra com o seu número precisa da sua autorização. Remova o aparelho que você não reconhece. Para trocar de celular, aprove o novo por este aparelho. Sem o antigo, é preciso esperar 30 dias sem uso para liberar o novo.</p>
       <div id="devices-list"></div>
       <div class="actions" style="margin-top:.9rem"><button class="btn ghost" data-close>Fechar</button></div>
     </div></div>
@@ -705,6 +710,9 @@ body{background:#063a1d}
     let DEV = store.get('dev', null);
     if (!DEV || !DEV.id || !DEV.key) { DEV = { id: rnd(32), key: rnd(48) }; store.set('dev', DEV); }
     const MOBILE = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+    const IOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    // Endereço da loja/site do Calango Digital onde o Resenha pode ser baixado. Preencha quando tiver o link.
+    const STORE_URL = '';
 
     function dialog(opts) {
       const o = Object.assign({ title: '', message: '', input: null, ok: 'OK', cancel: 'Cancelar', danger: false }, opts);
@@ -986,7 +994,10 @@ body{background:#063a1d}
       setAv($('pf-photo'), pfDraft.photo, (profile && profile.name) || '?', 'me');
       $('profile-modal').dataset.first = first ? '1' : '';
       $('pf-cancel').classList.toggle('hidden', !!first);
-      $('pf-install').classList.toggle('hidden', !(first && MOBILE && !isStandalone));
+      $('pf-install').classList.toggle('hidden', !first || (MOBILE && isStandalone));
+      $('pf-install-txt').textContent = MOBILE ? 'Instale o Resenha no celular e faça o cadastro por ele. Assim os avisos de mensagem funcionam.' : 'No computador só entra quem já instalou o Resenha no celular. Digite o mesmo número do celular e autorize o computador por lá.';
+      $('pf-install-btn').classList.toggle('hidden', !MOBILE);
+      $('pf-install-ttl').textContent = MOBILE ? 'Baixe o app primeiro' : 'Primeiro, o celular';
       openModal('profile-modal');
     }
     $('drawer-profile').onclick = $('drawer-me').onclick = () => { toggleDrawer(false); openProfile(false); };
@@ -1054,10 +1065,7 @@ body{background:#063a1d}
     function openCtx(id, x, y) {
       const c = getC(id); if (!c) return;
       ctxMenu.innerHTML = '';
-      [['Abrir conversa', () => openChat(id)], ['Convidar no WhatsApp', () => invite(c)], ['Trocar foto', async () => {
-        const f = await chooseFile(); if (!f) return;
-        c.photo = await squarePhoto(f, 128); saveContacts(); renderList(); if (active === id) paintHeader(c);
-      }], ['Renomear', async () => {
+      [['Abrir conversa', () => openChat(id)], ['Convidar no WhatsApp', () => invite(c)], ['Renomear', async () => {
         const n = await dialog({ title: 'Renomear contato', input: { value: c.name }, ok: 'Salvar' });
         if (n && n.trim()) { c.name = n.trim(); saveContacts(); renderList(); if (active === id) paintHeader(c); }
       }], ['Apagar contato', async () => {
@@ -1096,7 +1104,7 @@ body{background:#063a1d}
         row.className = 'chat-row' + (c.id === active ? ' active' : '');
         row.tabIndex = 0;
         row.innerHTML = '<div class="avatar"></div><div class="meta"><div class="name"></div><div class="sub"></div></div>';
-        setAv(row.querySelector('.avatar'), c.photo || c.theirPhoto, c.name, c.id);
+        setAv(row.querySelector('.avatar'), c.theirPhoto || c.photo, c.name, c.id);
         row.querySelector('.name').textContent = c.name;
         const sub = row.querySelector('.sub');
         sub.textContent = u ? u.last : 'Toque para conversar';
@@ -1120,7 +1128,7 @@ body{background:#063a1d}
 
     function paintHeader(c) {
       roomTitle.textContent = c.name;
-      setAv(chatAvatar, c.photo || c.theirPhoto, c.name, c.id);
+      setAv(chatAvatar, c.theirPhoto || c.photo, c.name, c.id);
       $('invite-bar').classList.toggle('hidden', !!c.hasApp);
     }
     function openChat(id) {
@@ -1150,7 +1158,7 @@ body{background:#063a1d}
       w.style.setProperty('--bc', pc.bg); w.style.setProperty('--bt', pc.tx);
       const av = document.createElement('div'); av.className = 'avatar sm';
       if (mine) setAv(av, profile && (profile.small || profile.photo), profile && profile.name, 'me');
-      else setAv(av, c && (c.photo || c.theirPhoto), c ? c.name : '?', c ? c.id : '');
+      else setAv(av, c && (c.theirPhoto || c.photo), c ? c.name : '?', c ? c.id : '');
       const col = document.createElement('div'); col.className = 'msg-col';
       if (!mine) { const s = document.createElement('span'); s.className = 'sender'; s.textContent = c ? c.name : ''; col.append(s); }
       const b = document.createElement('div'); b.className = 'bubble' + (m.call ? ' call' : '');
@@ -1326,6 +1334,8 @@ body{background:#063a1d}
       negado: ['Entrada não autorizada', 'O outro aparelho não autorizou este pedido.', () => [['Tentar de novo', () => startAuth(), 'yellow'], ['Usar outro número', otherNumber, 'ghost']]],
       expirou: ['O pedido expirou', 'Ninguém autorizou em 10 minutos.', () => [['Pedir de novo', () => startAuth(), 'yellow'], ['Usar outro número', otherNumber, 'ghost']]],
       removido: ['Aparelho desconectado', 'Este aparelho não está mais autorizado a usar o seu número. Peça autorização de novo.', () => [['Pedir autorização', () => startAuth(), 'yellow'], ['Usar outro número', otherNumber, 'ghost']]],
+      instalar: ['Instale o Resenha', IOS ? 'Para usar o Resenha você precisa instalar o app no celular.\n\nNo iPhone: abra esta página no Safari, toque em Compartilhar e escolha \"Adicionar à Tela de Início\". Depois abra o Resenha pelo ícone.' : 'Para usar o Resenha você precisa instalar o app no celular.\n\nToque em \"Instalar o app\". Se não aparecer o pedido, toque nos três pontinhos do navegador e escolha \"Instalar app\". Depois abra o Resenha pelo ícone.', () => { const b = []; if (!IOS) b.push(['Instalar o app', () => { if (deferredInstall) installApp(); else toast('Use os três pontinhos do navegador > Instalar app'); }, 'yellow']); if (STORE_URL) b.push(['Baixar no site Calango Digital', () => { location.href = STORE_URL; }, b.length ? 'ghost' : 'yellow']); return b; }],
+      celular: ['Cadastre-se primeiro no celular', 'Este número ainda não usa o Resenha no celular. Instale o app no celular, faça o cadastro por lá e depois volte aqui. O celular vai pedir autorização para liberar o computador.', () => [['Tentar de novo', () => startAuth(), 'yellow'], ['Usar outro número', otherNumber, 'ghost']]],
       erro: ['Sem conexão', 'Não foi possível falar com o servidor. Verifique a internet.', () => [['Tentar de novo', () => startAuth(), 'yellow']]]
     };
     function showAuth(kind) {
@@ -1352,9 +1362,10 @@ body{background:#063a1d}
       if (store.get('reg', '') === profile.id) { authed(); return; }
       authState = 'wait';
       let j;
-      try { j = await api('register', { to: profile.id, label: devLabel() }); } catch (e) { showAuth('erro'); return; }
+      try { j = await api('register', { to: profile.id, label: devLabel(), mob: !!(MOBILE && isStandalone) }); } catch (e) { showAuth('erro'); return; }
       if (j && j.error === 'dev' && !tries) { DEV = { id: rnd(32), key: rnd(48) }; store.set('dev', DEV); return startAuth(1); }
       if (!j || !j.ok) { showAuth('erro'); return; }
+      if (j.state === 'celular') { store.del('reg'); authState = 'none'; showAuth('celular'); return; }
       if (j.state === 'owner' || j.state === 'known') { authed(); return; }
       showAuth('espera'); waitApproval();
     }
@@ -1409,7 +1420,8 @@ body{background:#063a1d}
     document.querySelectorAll('.demo').forEach((d) => { d.innerHTML = demoHTML(); });
     setStatus('conectando...', '');
     renderList(); updateProfileUI(); updateAlertsBtn();
-    if (!profile) openProfile(true); else startAuth();
+    if (MOBILE && !isStandalone) { showAuth('instalar'); }
+    else if (!profile) openProfile(true); else startAuth();
   </script>
 </body>
 </html>
